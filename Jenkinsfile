@@ -19,7 +19,7 @@ pipeline {
           HELM_RELEASE = "$PREVIEW_NAMESPACE".toLowerCase()
         }
         steps {
-          dir ('/home/jenkins/go/src/github.com/jenkins-x/dex') {
+          dir ('/home/jenkins/go/src/github.com/coreos/dex') {
             checkout scm
             container('go') {
               sh "make test"
@@ -29,7 +29,7 @@ pipeline {
               sh "jx step post build --image $DOCKER_REGISTRY/$ORG/$APP_NAME:$PREVIEW_VERSION"
             }
           }
-          dir ('/home/jenkins/go/src/github.com/jenkins-x/dex/charts/preview') {
+          dir ('/home/jenkins/go/src/github.com/coreos/dex/charts/preview') {
             container('go') {
               sh "make preview"
               sh "jx preview --app $APP_NAME --dir ../.."
@@ -43,10 +43,10 @@ pipeline {
         }
         steps {
           container('go') {
-            dir ('/home/jenkins/go/src/github.com/jenkins-x/dex') {
+            dir ('/home/jenkins/go/src/github.com/coreos/dex') {
               checkout scm
             }
-            dir ('/home/jenkins/go/src/github.com/jenkins-x/dex/charts/dex') {
+            dir ('/home/jenkins/go/src/github.com/coreos/dex/charts/dex') {
                 // ensure we're not on a detached head
                 sh "git checkout master"
                 // until we switch to the new kubernetes / jenkins credential implementation use git credentials store
@@ -54,14 +54,14 @@ pipeline {
 
                 sh "jx step git credentials"
             }
-            dir ('/home/jenkins/go/src/github.com/jenkins-x/dex') {
+            dir ('/home/jenkins/go/src/github.com/coreos/dex') {
               // so we can retrieve the version in later steps
               sh "echo \$(jx-release-version) > VERSION"
             }
-            dir ('/home/jenkins/go/src/github.com/jenkins-x/dex/charts/dex') {
+            dir ('/home/jenkins/go/src/github.com/coreos/dex/charts/dex') {
               sh "make tag"
             }
-            dir ('/home/jenkins/go/src/github.com/jenkins-x/dex') {
+            dir ('/home/jenkins/go/src/github.com/coreos/dex') {
               container('go') {
                 sh "make test"
                 sh 'export VERSION=`cat VERSION` && skaffold build -f skaffold.yaml'
@@ -77,7 +77,7 @@ pipeline {
           branch 'master'
         }
         steps {
-          dir ('/home/jenkins/go/src/github.com/jenkins-x/dex/charts/dex') {
+          dir ('/home/jenkins/go/src/github.com/coreos/dex/charts/dex') {
             container('go') {
               sh 'jx step changelog --version v\$(cat ../../VERSION)'
 
