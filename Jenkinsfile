@@ -79,7 +79,6 @@ pipeline {
         steps {
           dir ('/home/jenkins/go/src/github.com/coreos/dex/charts/dex') {
             container('go') {
-              input 'foo'
               sh 'jx step changelog --version v\$(cat ../../VERSION)'
 
               // release the helm chart
