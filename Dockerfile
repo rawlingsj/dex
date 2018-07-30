@@ -11,9 +11,6 @@ COPY ./bin/dex /dex
 # Import frontend assets and set the correct CWD directory so the assets
 # are in the default path.
 COPY ./web /web
-
 WORKDIR /
 
 ENTRYPOINT ["/dex"]
-
-CMD ["version"]
