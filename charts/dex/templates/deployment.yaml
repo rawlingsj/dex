@@ -33,7 +33,7 @@ spec:
         image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
         imagePullPolicy: {{ .Values.image.pullPolicy }}
         command:
-        - /dex
+        - /usr/local/bin/dex
         - serve
         - /etc/dex/cfg/config.yaml
         resources:
