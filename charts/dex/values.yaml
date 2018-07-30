@@ -6,14 +6,24 @@ image:
   repository: draft
   tag: dev
   pullPolicy: IfNotPresent
+
 service:
   name: dex
   type: ClusterIP
-  externalPort: 80
-  internalPort: 8080
   annotations:
     fabric8.io/expose: "true"
     fabric8.io/ingress.annotations: "kubernetes.io/ingress.class: nginx"
+
+ports:
+  - name: http
+    containerPort: 8080
+    targetPort: 80
+    protocol: TCP
+  - name: grpc
+    containerPort: 5000
+    targetPort: 5000
+    protocol: TCP
+
 resources:
   limits:
     cpu: 100m
@@ -21,14 +31,92 @@ resources:
   requests:
     cpu: 80m
     memory: 128Mi
-probePath: /
+
+probePath: /healthz
 livenessProbe:
+  port: 8080
   initialDelaySeconds: 60
   periodSeconds: 10
   successThreshold: 1
   timeoutSeconds: 1
 readinessProbe:
+  port: 8080
   periodSeconds: 10
   successThreshold: 1
   timeoutSeconds: 1
 terminationGracePeriodSeconds: 10
+
+inMiniKube: false
+
+nodeSelector: {}
+
+certs:
+  image: gcr.io/google_containers/kubernetes-dashboard-init-amd64
+  imageTag: "v1.0.0"
+  imagePullPolicy: "IfNotPresent"
+  web:
+    create: true
+    activeDeadlineSeconds: 300
+    caDays: 10000
+    certDays: 10000
+    altNames:
+      - dex.jx.35.187.37.181.nip.io
+    altIPs: {}
+    secret: 
+       tlsName: dex-web-server-tls
+       caName: dex-web-server-ca
+  grpc:
+    create: true
+    activeDeadlineSeconds: 300
+    altNames:
+      - dex.jx.35.187.37.181.nip.io
+    altIPs: {}
+    secret:
+      serverTlsName: dex-grpc-server-tls
+      clientTlsName: dex-grpc-client-tls
+      caName: dex-grpc-ca
+
+env: []
+
+rbac:
+  # Specifies whether RBAC resources should be created
+  create: true
+
+serviceAccount:
+  # Specifies whether a ServiceAccount should be created
+  create: true
+  # The name of the ServiceAccount to use.
+  # If not set and create is true, a name is generated using the fullname template
+  name:
+
+config:
+  issuer: http://dex.jx.35.187.37.181.nip.io
+  storage:
+    type: kubernetes
+    config:
+      inCluster: true
+  logger:
+    level: debug
+  web:
+    http: 0.0.0.0:8080
+    #tlsCert: /etc/dex/tls/https/server/tls.crt
+    #tlsKey: /etc/dex/tls/https/server/tls.key
+  grpc:
+    addr: 0.0.0.0:5000
+    tlsCert: /etc/dex/tls/grpc/server/tls.crt
+    tlsKey: /etc/dex/tls/grpc/server/tls.key
+    tlsClientCA: /etc/dex/tls/grpc/ca/tls.crt
+  connectors:
+  - type: github
+    id: github
+    name: GitHub
+    config:
+      clientID: 006167d9a5f361857141
+      clientSecret: 6d53cabf252b0f7e40847e143ac69cf4fcf538f0
+      redirectURI: http://dex.jx.35.187.37.181.nip.io/callback
+      orgs:
+        - name: jenkins-x
+  oauth2:
+    skipApprovalScreen: true
+
+  enablePasswordDB: true

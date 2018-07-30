@@ -1,3 +1,11 @@
+{{ $fullname := include "fullname" . }}
+{{ $httpsTlsBuiltName := printf "%s-tls" $fullname }}
+{{ $httpsTlsSecretName := default $httpsTlsBuiltName .Values.certs.web.secret.tlsName }}
+{{ $grpcTlsServerBuiltName := printf "%s-server-tls" $fullname }}
+{{ $grpcTlsServerSecretName := default $grpcTlsServerBuiltName .Values.certs.grpc.secret.serverTlsName }}
+{{ $grpcCaBuiltName := printf "%s-ca" $fullname }}
+{{ $grpcCaSecretName := default $grpcCaBuiltName .Values.certs.grpc.secret.caName }}
+
 apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
@@ -5,6 +13,8 @@ metadata:
   labels:
     draft: {{ default "draft-app" .Values.draft }}
     chart: "{{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}"
+    heritage: "{{ .Release.Service }}"
+    release: "{{ .Release.Name }}"
 spec:
   replicas: {{ .Values.replicaCount }}
   template:
@@ -17,16 +27,34 @@ spec:
 {{ toYaml .Values.podAnnotations | indent 8 }}
 {{- end }}
     spec:
+      serviceAccountName: {{ template "serviceAccountName" . }}
       containers:
       - name: {{ .Chart.Name }}
         image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
         imagePullPolicy: {{ .Values.image.pullPolicy }}
+        command:
+        - /usr/local/bin/dex
+        - serve
+        - /etc/dex/cfg/config.yaml
+        resources:
+{{ toYaml .Values.resources | indent 12 }}
         ports:
-        - containerPort: {{ .Values.service.internalPort }}
+{{ toYaml .Values.ports | indent 12 }}
+        env:
+{{ toYaml .Values.env | indent 12 }}
+        volumeMounts:
+        - mountPath: /etc/dex/cfg
+          name: config
+        - mountPath: /etc/dex/tls/https/server
+          name: https-tls
+        - mountPath: /etc/dex/tls/grpc/server
+          name: grpc-tls-server
+        - mountPath: /etc/dex/tls/grpc/ca
+          name: grpc-tls-ca
         livenessProbe:
           httpGet:
             path: {{ .Values.probePath }}
-            port: {{ .Values.service.internalPort }}
+            port: {{ .Values.livenessProbe.port }}
           initialDelaySeconds: {{ .Values.livenessProbe.initialDelaySeconds }}
           periodSeconds: {{ .Values.livenessProbe.periodSeconds }}
           successThreshold: {{ .Values.livenessProbe.successThreshold }}
@@ -34,10 +62,29 @@ spec:
         readinessProbe:
           httpGet:
             path: {{ .Values.probePath }}
-            port: {{ .Values.service.internalPort }}
+            port: {{ .Values.readinessProbe.port }}
           periodSeconds: {{ .Values.readinessProbe.periodSeconds }}
           successThreshold: {{ .Values.readinessProbe.successThreshold }}
           timeoutSeconds: {{ .Values.readinessProbe.timeoutSeconds }}
-        resources:
-{{ toYaml .Values.resources | indent 12 }}
       terminationGracePeriodSeconds: {{ .Values.terminationGracePeriodSeconds }}
+      volumes:
+      - secret:
+          defaultMode: 420
+          items:
+          - key: config.yaml
+            path: config.yaml
+          secretName: {{ $fullname }}
+        name: config
+      - name: https-tls
+        secret:
+          defaultMode: 420
+          secretName: {{ $httpsTlsSecretName | quote }}
+      - name: grpc-tls-server
+        secret:
+          defaultMode: 420
+          secretName: {{ $grpcTlsServerSecretName | quote }}
+      - name: grpc-tls-ca
+        secret:
+          defaultMode: 420
+          secretName: {{ $grpcCaSecretName| quote }}
+
