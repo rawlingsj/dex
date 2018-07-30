@@ -15,6 +15,7 @@ group=$(shell id -g -n)
 
 export GOBIN=$(PWD)/bin
 
+CGO_ENABLED = 0
 LD_FLAGS="-w -X $(REPO_PATH)/version.Version=$(VERSION)"
 
 build: bin/dex bin/example-app bin/grpc-client
@@ -30,7 +31,7 @@ bin/grpc-client:
 
 .PHONY: release-binary
 release-binary:
-	@go build -o ./bin/dex -v -ldflags $(LD_FLAGS) $(REPO_PATH)/cmd/dex
+	CGO_ENABLED=$(CGO_ENABLED) GOOS=linux GOARCH=amd64 go build -o ./bin/dex -v -ldflags $(LD_FLAGS) $(REPO_PATH)/cmd/dex
 
 .PHONY: revendor
 revendor:
