@@ -12,6 +12,7 @@ RUN mkdir /lib64 && ln -s /lib/libc.musl-x86_64.so.1 /lib64/ld-linux-x86-64.so.2
 # Import frontend assets and set the correct CWD directory so the assets
 # are in the default path.
 COPY ./web /web
+
 WORKDIR /
 
 ENTRYPOINT ["dex"]
