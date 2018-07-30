@@ -1,1 +1,1 @@
-# golang application
+# Chart for dex
