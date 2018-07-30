@@ -30,7 +30,7 @@ bin/grpc-client:
 
 .PHONY: release-binary
 release-binary:
-	@go build -o /go/bin/dex -v -ldflags $(LD_FLAGS) $(REPO_PATH)/cmd/dex
+	@go build -o ./bin/dex -v -ldflags $(LD_FLAGS) $(REPO_PATH)/cmd/dex
 
 .PHONY: revendor
 revendor:

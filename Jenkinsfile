@@ -22,9 +22,9 @@ pipeline {
           dir ('/home/jenkins/go/src/github.com/coreos/dex') {
             checkout scm
             container('go') {
-              sh "make test"
-              sh 'export VERSION=$PREVIEW_VERSION && skaffold build -f skaffold.yaml'
+              sh "make test release-binary"
 
+              sh 'export VERSION=$PREVIEW_VERSION && skaffold build -f skaffold.yaml'
 
               sh "jx step post build --image $DOCKER_REGISTRY/$ORG/$APP_NAME:$PREVIEW_VERSION"
             }
@@ -63,7 +63,7 @@ pipeline {
             }
             dir ('/home/jenkins/go/src/github.com/coreos/dex') {
               container('go') {
-                sh "make test"
+                sh "make test release-binary"
                 sh 'export VERSION=`cat VERSION` && skaffold build -f skaffold.yaml'
 
                 sh "jx step post build --image $DOCKER_REGISTRY/$ORG/$APP_NAME:\$(cat VERSION)"
