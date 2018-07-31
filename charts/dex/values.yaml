@@ -60,7 +60,7 @@ certs:
     caDays: 10000
     certDays: 10000
     altNames:
-      - dex.jx.35.187.37.181.nip.io
+      - dex
     altIPs: {}
     secret: 
        tlsName: dex-web-server-tls
@@ -69,7 +69,7 @@ certs:
     create: true
     activeDeadlineSeconds: 300
     altNames:
-      - dex.jx.35.187.37.181.nip.io
+      - dex
     altIPs: {}
     secret:
       serverTlsName: dex-grpc-server-tls
