@@ -35,7 +35,7 @@ pipeline {
               sh "jx preview --app $APP_NAME --dir ../.."
 
               // verify if the preview was properly deployed 
-              sh 'jx step verify --pods=1 --after=120 --restarts=0'
+              //sh 'jx step verify --pods=1 --after=120 --restarts=0'
             }
           }
         }
@@ -91,7 +91,7 @@ pipeline {
               sh 'jx promote -b --all-auto --timeout 1h --version \$(cat ../../VERSION)'
 
               // verify if the preview was properly deployed 
-              sh 'jx step verify --pods=1 --after=120 --restarts=0'
+              //sh 'jx step verify --pods=1 --after=120 --restarts=0'
             }
           }
         }
