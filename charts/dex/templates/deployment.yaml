@@ -45,12 +45,16 @@ spec:
         volumeMounts:
         - mountPath: /etc/dex/cfg
           name: config
+{{- if .Values.certs.web.create }}
         - mountPath: /etc/dex/tls/https/server
           name: https-tls
+{{- end }}
+{{- if .Values.certs.grpc.create }}
         - mountPath: /etc/dex/tls/grpc/server
           name: grpc-tls-server
         - mountPath: /etc/dex/tls/grpc/ca
           name: grpc-tls-ca
+{{- end }}
         livenessProbe:
           httpGet:
             path: {{ .Values.probePath }}
@@ -75,10 +79,13 @@ spec:
             path: config.yaml
           secretName: {{ $fullname }}
         name: config
+{{- if .Values.certs.web.create }}
       - name: https-tls
         secret:
           defaultMode: 420
           secretName: {{ $httpsTlsSecretName | quote }}
+{{- end }}
+{{- if .Values.certs.grpc.create }}
       - name: grpc-tls-server
         secret:
           defaultMode: 420
@@ -87,4 +94,4 @@ spec:
         secret:
           defaultMode: 420
           secretName: {{ $grpcCaSecretName| quote }}
-
+{{- end }}
