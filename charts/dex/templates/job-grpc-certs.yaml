@@ -12,8 +12,8 @@ apiVersion: batch/v1
 kind: Job
 metadata:
   annotations:
-    "helm.sh/hook": post-install,pre-upgrade
-    "helm.sh/hook-weight": "3"
+    "helm.sh/hook": post-install,post-upgrade
+    "helm.sh/hook-weight": "2"
     "helm.sh/hook-delete-policy": hook-succeeded
   name: {{ $fullname }}-grpc-certs
   labels:
@@ -80,14 +80,30 @@ spec:
           # Remove CSR's
           rm *.csr;
 
-          # Cleanup the existing configmap and secrets
-          kubectl delete configmap {{ $caName }} --namespace {{ .Release.Namespace }} || true
-          kubectl delete secret {{ $caName }} {{ $tlsServerSecretName }} {{ $tlsClientSecretName }} --namespace {{ .Release.Namespace }} || true
-          kubectl create configmap {{ $caName }} --namespace {{ .Release.Namespace }} --from-file=ca.crt;
-          # Store all certficates in secrets
-          kubectl create secret tls {{ $caName }} --namespace {{ .Release.Namespace }} --cert=ca.crt --key=ca.key;
-          kubectl create secret tls {{ $tlsServerSecretName }} --namespace {{ .Release.Namespace }} --cert=server.crt --key=server.key;
-          kubectl create secret tls {{ $tlsClientSecretName }} --namespace {{ .Release.Namespace }} --cert=client.crt --key=client.key;
+          # Store the CA public certificate in a configmap
+          notfound=false
+          kubectl get configmap {{ $caName }} --namespace {{ .Release.Namespace }} || notfound=true 
+          if $notfound; then
+            kubectl create configmap {{ $caName }} --namespace {{ .Release.Namespace }} --from-file=ca.crt;
+          fi
+          # Store the CA certificate and key in a secret
+          notfound=false
+          kubectl get secret {{ $caName }} --namespace {{ .Release.Namespace }} || notfound=true
+          if $notfound; then
+            kubectl create secret tls {{ $caName }} --namespace {{ .Release.Namespace }} --cert=ca.crt --key=ca.key;
+          fi
+          # Store the gRPC server certificate and key in a secret
+          notfound=false
+          kubectl get secret {{ $tlsServerSecretName }} --namespace {{ .Release.Namespace }} || notfound=true
+          if $notfound; then
+            kubectl create secret tls {{ $tlsServerSecretName }} --namespace {{ .Release.Namespace }} --cert=server.crt --key=server.key;
+          fi
+          # Store the gRPC client certificate and key in a secret
+          notfound=false
+          kubectl get secret {{ $tlsClientSecretName }} --namespace {{ .Release.Namespace }} || notfound=true
+          if $notfound; then
+            kubectl create secret tls {{ $tlsClientSecretName }} --namespace {{ .Release.Namespace }} --cert=client.crt --key=client.key;
+          fi
         volumeMounts:
         - name: openssl-config
           mountPath: /etc/dex/tls/grpc
