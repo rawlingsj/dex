@@ -3,8 +3,8 @@
 # Declare variables to be passed into your templates.
 replicaCount: 1
 image:
-  repository: draft
-  tag: dev
+  repository: cosmincojocar/dex
+  tag: latest
   pullPolicy: IfNotPresent
 
 service:
@@ -90,7 +90,7 @@ serviceAccount:
   name:
 
 config:
-  issuer: http://dex.jx.35.187.37.181.nip.io
+  issuer: http://dex
   storage:
     type: kubernetes
     config:
@@ -113,7 +113,7 @@ config:
     config:
       clientID: 006167d9a5f361857141
       clientSecret: 6d53cabf252b0f7e40847e143ac69cf4fcf538f0
-      redirectURI: http://dex.jx.35.187.37.181.nip.io/callback
+      redirectURI: http://dex.jx-staging.35.187.37.181.nip.io/callback
       orgs:
         - name: jenkins-x
   oauth2:
