@@ -90,7 +90,7 @@ serviceAccount:
   name:
 
 config:
-    issuer: http://dex.jx-staging.35.187.37.181.nip.io
+  issuer: http://dex.jx-staging.35.187.37.181.nip.io
   storage:
     type: kubernetes
     config:
