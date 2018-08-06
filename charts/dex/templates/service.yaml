@@ -16,11 +16,9 @@ spec:
   type: {{ .Values.service.type }}
   ports:
 {{- range .Values.ports }}
-{{- if .public }}
   - name: {{ .name }} 
-    port: {{ .containerPort }}
-    targetPort: {{ .targetPort }}
-{{- end }}
+    port: {{ .externalPort }}
+    targetPort: {{ .internalPort }}
 {{- end }}
   selector:
     app: {{ template "fullname" . }}
