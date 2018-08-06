@@ -19,10 +19,12 @@ ports:
     containerPort: 8080
     targetPort: 80
     protocol: TCP
+    public: true
   - name: grpc
     containerPort: 5000
     targetPort: 5000
     protocol: TCP
+    public: false
 
 resources:
   limits:
