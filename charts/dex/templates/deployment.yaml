@@ -40,7 +40,7 @@ spec:
 {{ toYaml .Values.resources | indent 12 }}
         ports:
 {{- range .Values.ports }}
-          name: {{ .name }}
+        - name: {{ .name }}
           containerPort: {{ .containerPort }}
           protocol: {{ .protocol }}
 {{- end }}
