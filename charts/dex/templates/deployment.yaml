@@ -41,7 +41,7 @@ spec:
         ports:
 {{- range .Values.ports }}
         - name: {{ .name }}
-          containerPort: {{ .containerPort }}
+          containerPort: {{ .internalPort }}
           protocol: {{ .protocol }}
 {{- end }}
         env:
