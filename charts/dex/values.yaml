@@ -90,7 +90,7 @@ serviceAccount:
   name:
 
 config:
-  issuer: http://dex:8080
+  issuer: http://dex
   storage:
     type: kubernetes
     config:
@@ -99,8 +99,6 @@ config:
     level: debug
   web:
     http: 0.0.0.0:8080
-    #tlsCert: /etc/dex/tls/https/server/tls.crt
-    #tlsKey: /etc/dex/tls/https/server/tls.key
   grpc:
     addr: 0.0.0.0:5000
     tlsCert: /etc/dex/tls/grpc/server/tls.crt
