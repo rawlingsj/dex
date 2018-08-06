@@ -92,7 +92,7 @@ serviceAccount:
   name:
 
 config:
-  issuer: http://dex
+  issuer: http://dex:8080
   storage:
     type: kubernetes
     config:
