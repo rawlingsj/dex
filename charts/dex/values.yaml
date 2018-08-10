@@ -46,8 +46,6 @@ readinessProbe:
   timeoutSeconds: 1
 terminationGracePeriodSeconds: 10
 
-inMiniKube: false
-
 nodeSelector: {}
 
 certs:
