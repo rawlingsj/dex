@@ -1,6 +1,4 @@
 {{ $fullname := include "fullname" . }}
-{{ $httpsTlsBuiltName := printf "%s-tls" $fullname }}
-{{ $httpsTlsSecretName := default $httpsTlsBuiltName .Values.certs.web.secret.tlsName }}
 {{ $grpcTlsServerBuiltName := printf "%s-server-tls" $fullname }}
 {{ $grpcTlsServerSecretName := default $grpcTlsServerBuiltName .Values.certs.grpc.secret.serverTlsName }}
 {{ $grpcCaBuiltName := printf "%s-ca" $fullname }}
@@ -49,10 +47,6 @@ spec:
         volumeMounts:
         - mountPath: /etc/dex/cfg
           name: config
-{{- if .Values.certs.web.create }}
-        - mountPath: /etc/dex/tls/https/server
-          name: https-tls
-{{- end }}
 {{- if .Values.certs.grpc.create }}
         - mountPath: /etc/dex/tls/grpc/server
           name: grpc-tls-server
@@ -83,12 +77,6 @@ spec:
             path: config.yaml
           secretName: {{ $fullname }}
         name: config
-{{- if .Values.certs.web.create }}
-      - name: https-tls
-        secret:
-          defaultMode: 420
-          secretName: {{ $httpsTlsSecretName | quote }}
-{{- end }}
 {{- if .Values.certs.grpc.create }}
       - name: grpc-tls-server
         secret:
