@@ -1,11 +1,6 @@
 {{- if .Values.certs.grpc.create }}
 {{ $fullname := include "fullname" . }}
-{{ $tlsServerBuiltName := printf "%s-server-tls" $fullname }}
-{{ $tlsServerSecretName := default $tlsServerBuiltName .Values.certs.grpc.secret.serverTlsName }}
-{{ $tlsClientBuiltName := printf "%s-client-tls" $fullname }}
-{{ $tlsClientSecretName := default $tlsClientBuiltName .Values.certs.grpc.secret.clientTlsName }}
-{{ $caBuiltName := printf "%s-ca" $fullname }}
-{{ $caName := default $caBuiltName .Values.certs.grpc.secret.caName }}
+{{ $caName := .Values.certs.grpc.ca.secretName }}
 {{ $openSslConfigName := printf "%s-openssl-config" $fullname }}
 {{ $local := dict "i" 0 }}
 apiVersion: batch/v1
@@ -13,7 +8,7 @@ kind: Job
 metadata:
   annotations:
     "helm.sh/hook": post-install,post-upgrade
-    "helm.sh/hook-weight": "1"
+    "helm.sh/hook-weight": "2"
     "helm.sh/hook-delete-policy": hook-succeeded
   name: {{ $fullname }}-grpc-certs
   labels:
@@ -65,20 +60,6 @@ spec:
           openssl genrsa -out ca.key 4096;
           # Certificate Authority (self-signed certificate)
           openssl req -config $CONFIG -new -x509 -days 3650 -sha256 -key ca.key -extensions v3_ca -out ca.crt -subj "/CN=grpc-ca";
-          # Server private key (unencrypted)
-          openssl genrsa -out server.key 2048;
-          # Server certificate signing request (CSR)
-          openssl req -config $CONFIG -new -sha256 -key server.key -out server.csr -subj "/CN=grpc-server";
-          # Certificate Authority signs CSR to grant a certificate
-          openssl ca -batch -config $CONFIG  -extensions server_cert -days 365 -notext -md sha256 -in server.csr -out server.crt -cert ca.crt -keyfile ca.key;
-          # Client private key (unencrypted)
-          openssl genrsa -out client.key 2048;
-          # Signed client certificate signing request (CSR)
-          openssl req -config $CONFIG -new -sha256 -key client.key -out client.csr -subj "/CN=grpc-client";
-          # Certificate Authority signs CSR to grant a certificate
-          openssl ca -batch -config $CONFIG -extensions usr_cert -days 365 -notext -md sha256 -in client.csr -out client.crt -cert ca.crt -keyfile ca.key;
-          # Remove CSR's
-          rm *.csr;
 
           # Store the CA public certificate in a configmap
           notfound=false
@@ -91,18 +72,6 @@ spec:
           kubectl get secret {{ $caName }} --namespace {{ .Release.Namespace }} || notfound=true
           if $notfound; then
             kubectl create secret tls {{ $caName }} --namespace {{ .Release.Namespace }} --cert=ca.crt --key=ca.key;
-          fi
-          # Store the gRPC server certificate and key in a secret
-          notfound=false
-          kubectl get secret {{ $tlsServerSecretName }} --namespace {{ .Release.Namespace }} || notfound=true
-          if $notfound; then
-            kubectl create secret tls {{ $tlsServerSecretName }} --namespace {{ .Release.Namespace }} --cert=server.crt --key=server.key;
-          fi
-          # Store the gRPC client certificate and key in a secret
-          notfound=false
-          kubectl get secret {{ $tlsClientSecretName }} --namespace {{ .Release.Namespace }} || notfound=true
-          if $notfound; then
-            kubectl create secret tls {{ $tlsClientSecretName }} --namespace {{ .Release.Namespace }} --cert=client.crt --key=client.key;
           fi
         volumeMounts:
         - name: openssl-config

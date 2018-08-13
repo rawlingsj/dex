@@ -1,8 +1,6 @@
 {{ $fullname := include "fullname" . }}
-{{ $grpcTlsServerBuiltName := printf "%s-server-tls" $fullname }}
-{{ $grpcTlsServerSecretName := default $grpcTlsServerBuiltName .Values.certs.grpc.secret.serverTlsName }}
-{{ $grpcCaBuiltName := printf "%s-ca" $fullname }}
-{{ $grpcCaSecretName := default $grpcCaBuiltName .Values.certs.grpc.secret.caName }}
+{{ $grpcTlsServerSecretName := .Values.certs.grpc.server.secretName }}
+{{ $grpcCaSecretName := .Values.certs.grpc.ca.secretName }}
 
 apiVersion: extensions/v1beta1
 kind: Deployment
@@ -85,5 +83,5 @@ spec:
       - name: grpc-tls-ca
         secret:
           defaultMode: 420
-          secretName: {{ $grpcCaSecretName| quote }}
+          secretName: {{ $grpcCaSecretName | quote }}
 {{- end }}

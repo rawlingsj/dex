@@ -1,0 +1,23 @@
+{{- if .Values.certs.grpc.create }}
+{{ $fullname := include "fullname" . }}
+apiVersion: certmanager.k8s.io/v1alpha1
+kind: Certificate
+metadata:
+  name: {{ $fullname }}-grpc-server-cert
+  # annotations:
+    # "helm.sh/hook": post-install,post-upgrade
+    # "helm.sh/hook-weight": "4"
+  labels:
+    app: {{ $fullname }}
+    chart: "{{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}"
+    heritage: "{{ .Release.Service }}"
+    release: "{{ .Release.Name }}"
+spec:
+  secretName: {{ .Values.certs.grpc.server.secretName }}
+  issuerRef:
+    name: {{ $fullname }}-grpc-issuer
+    kind: ClusterIssuer
+  commonName: dex-grpc-server
+  dnsName:
+  - dex
+{{- end }}
