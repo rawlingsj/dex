@@ -1,4 +1,4 @@
 dependencies:
   - name: cert-manager
-    version: v0.4.1
-    repository: https://kubernetes-charts.storage.googleapis.com
+    version: 0.4.1
+    repository: http://chartmuseum.build.cd.jenkins-x.io

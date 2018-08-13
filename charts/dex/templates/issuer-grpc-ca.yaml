@@ -4,9 +4,6 @@ apiVersion: certmanager.k8s.io/v1alpha1
 kind: ClusterIssuer
 metadata:
   name: {{ $fullname }}-grpc-issuer
-  # annotations:
-    # "helm.sh/hook": post-install,post-upgrade
-    # "helm.sh/hook-weight": "3"
   labels:
     app: {{ $fullname }}
     chart: "{{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}"
