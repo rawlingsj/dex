@@ -1,6 +1,0 @@
-dependencies:
-- name: cert-manager
-  repository: http://chartmuseum.build.cd.jenkins-x.io
-  version: 0.4.1
-digest: sha256:cd7da22bfabf068f663aeaca3249169736aad0585f20fa728b6a06bf63ca5fff
-generated: 2018-08-13T16:17:44.857411837+02:00
