@@ -58,10 +58,10 @@ certs:
     altNames:
       - dex
     altIPs: {}
-    secret:
-      serverTlsName: dex-grpc-server-tls
-      clientTlsName: dex-grpc-client-tls
-      caName: dex-grpc-ca
+    ca:
+      secretName: dex-grpc-ca
+    server:
+      secretName: dex-grpc-server-cert
 
 env: []
 
