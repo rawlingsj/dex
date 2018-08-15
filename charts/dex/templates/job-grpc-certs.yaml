@@ -61,12 +61,6 @@ spec:
           # Certificate Authority (self-signed certificate)
           openssl req -config $CONFIG -new -x509 -days 3650 -sha256 -key ca.key -extensions v3_ca -out ca.crt -subj "/CN=grpc-ca";
 
-          # Store the CA public certificate in a configmap
-          notfound=false
-          kubectl get configmap {{ $caName }} --namespace {{ .Release.Namespace }} || notfound=true 
-          if $notfound; then
-            kubectl create configmap {{ $caName }} --namespace {{ .Release.Namespace }} --from-file=ca.crt;
-          fi
           # Store the CA certificate and key in a secret
           notfound=false
           kubectl get secret {{ $caName }} --namespace {{ .Release.Namespace }} || notfound=true
@@ -81,3 +75,4 @@ spec:
         configMap:
           name: {{ $openSslConfigName }}
 {{- end }}
+
