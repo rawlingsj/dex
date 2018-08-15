@@ -96,8 +96,8 @@ config:
     id: github
     name: GitHub
     config:
-      clientID: 006167d9a5f361857141
-      clientSecret: 6d53cabf252b0f7e40847e143ac69cf4fcf538f0
+      clientID:
+      clientSecret:
       redirectURI: http://dex.jx-staging.35.187.37.181.nip.io/callback
       orgs:
         - name: jenkins-x
