@@ -76,32 +76,13 @@ serviceAccount:
   # If not set and create is true, a name is generated using the fullname template
   name:
 
-config:
-  issuer: http://dex.jx-staging.35.187.37.181.nip.io
-  storage:
-    type: kubernetes
+issuer: http://dex.jx-staging.35.187.37.181.nip.io
+connectors:
+  github: 
     config:
-      inCluster: true
-  logger:
-    level: debug
-  web:
-    http: 0.0.0.0:8080
-  grpc:
-    addr: 0.0.0.0:5000
-    tlsCert: /etc/dex/tls/grpc/server/tls.crt
-    tlsKey: /etc/dex/tls/grpc/server/tls.key
-    tlsClientCA: /etc/dex/tls/grpc/ca/tls.crt
-  connectors:
-  - type: github
-    id: github
-    name: GitHub
-    config:
+      type: github
+      name: GitHub
       clientID:
       clientSecret:
-      redirectURI: http://dex.jx-staging.35.187.37.181.nip.io/callback
       orgs:
-        - name: jenkins-x
-  oauth2:
-    skipApprovalScreen: true
-
-  enablePasswordDB: true
+        - jenkins-x
