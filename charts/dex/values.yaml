@@ -76,7 +76,7 @@ serviceAccount:
   # If not set and create is true, a name is generated using the fullname template
   name:
 
-issuer: http://dex.jx-staging.35.187.37.181.nip.io
+domain:
 connectors:
   github: 
     config:
@@ -85,4 +85,3 @@ connectors:
       clientID:
       clientSecret:
       orgs:
-        - jenkins-x

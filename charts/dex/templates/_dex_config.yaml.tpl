@@ -1,5 +1,5 @@
-{{ $issuer := .Values.issuer }}
-issuer: {{ $issuer }}
+{{ $issuerDomain := .Values.domain }}
+issuer: https://{{ $issuerDomain }}
 storage:
   type: kubernetes
   config:
@@ -27,7 +27,7 @@ connectors:
   config:
     clientID: {{ $connector.config.clientID }}
     clientSecret: {{ $connector.config.clientSecret }}
-    redirectURI: {{ $issuer }}/callback
+    redirectURI: https://{{ $issuerDomain }}/callback
     orgs:
 {{- range $connector.config.orgs }}
       - name: {{ . }}
