@@ -59,7 +59,7 @@ spec:
           # CA private key (unencrypted)
           openssl genrsa -out ca.key 4096;
           # Certificate Authority (self-signed certificate)
-          openssl req -config $CONFIG -new -x509 -days 3650 -sha256 -key ca.key -extensions v3_ca -out ca.crt -subj "/CN=grpc-ca";
+          openssl req -config $CONFIG -new -x509 -days 3650 -sha256 -key ca.key -extensions v3_ca -out ca.crt -subj "/CN=dex-grpc-ca";
 
           # Store the CA certificate and key in a secret
           notfound=false

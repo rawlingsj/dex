@@ -14,7 +14,7 @@ spec:
   issuerRef:
     name: {{ $fullname }}-grpc-issuer
     kind: ClusterIssuer
-  commonName: dex
+  commonName: dex.{{ .Release.Namespace }}
   dnsName:
-  - dex
+  - dex.{{ .Release.Namespace }}
 {{- end }}
