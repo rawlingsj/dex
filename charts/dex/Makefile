@@ -5,6 +5,7 @@ OS := $(shell uname)
 VERSION := $(shell cat ../../VERSION)
 
 setup:
+	helm repo add jenkins-x-api https://chartmuseum.build.cd.jenkins-x.io 
 	helm repo add jenkinsxio https://chartmuseum.jx.cd.jenkins-x.io 
 
 build: setup clean
