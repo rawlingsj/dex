@@ -3,15 +3,19 @@ NAME := dex
 OS := $(shell uname)
 VERSION := $(shell cat ../../version/VERSION)
 
-build: clean
+setup:
+	helm repo add jenkins-x-api https://chartmuseum.build.cd.jenkins-x.io 	
+	helm repo add jenkinsxio https://chartmuseum.jx.cd.jenkins-x.io 
+
+build: clean setup
 	helm dependency build
 	helm lint
 
-install: clean build
+install: clean setup build
 	helm install . --name ${NAME}
 	watch kubectl get pods
 
-upgrade: clean build
+upgrade: clean stup build
 	helm upgrade ${NAME} .
 	watch kubectl get pods
 
@@ -36,4 +40,5 @@ else
 endif
 	helm package .
 	curl --fail -u $(CHARTMUSEUM_CREDS_USR):$(CHARTMUSEUM_CREDS_PSW) --data-binary "@$(NAME)-$(VERSION).tgz" $(CHART_REPO)/api/charts
+	helm repo update
 	rm -rf ${NAME}*.tgz
