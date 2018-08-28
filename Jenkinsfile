@@ -74,6 +74,7 @@ pipeline {
               }
             }
             dir ('/home/jenkins/go/src/github.com/coreos/dex/charts/dex') {
+              sh "helm init --client-only"
               sh "make tag"
               sh "make release"
             }
