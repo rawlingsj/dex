@@ -4,7 +4,7 @@
 replicaCount: 1
 image:
   repository: cosmincojocar/dex
-  tag: latest
+  tag: v2.10.1
   pullPolicy: IfNotPresent
 
 service:
