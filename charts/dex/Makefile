@@ -1,18 +1,20 @@
-CHART_REPO := https://chartmuseum.build.cd.jenkins-x.io
+CHART_REPO := http://jenkins-x-chartmuseum:8080
 CURRENT=$(pwd)
 NAME := dex
 OS := $(shell uname)
 VERSION := $(shell cat ../../VERSION)
 
-build: clean
-	rm -rf requirements.lock
+setup: 
+    helm repo add jenkins-x-api http://chartmuseum.build.cd.jenkins-x.io
+
+build: setup clean
 	helm dependency build
 	helm lint
 
-install: clean build
+install: clean setup build
 	helm install . --name ${NAME}
 
-upgrade: clean build
+upgrade: clean setup  build
 	helm upgrade ${NAME} .
 
 delete:
@@ -21,14 +23,15 @@ delete:
 clean:
 	rm -rf charts
 	rm -rf ${NAME}*.tgz
+	rm -rf requirements.lock
 
-release: clean
+init:
 	helm init --client-only
-	helm repo add  jenkinsio ${CHART_REPO}
-	helm dependency build
-	helm lint
+
+release: init setup clean build tag
 	helm package .
 	curl --fail -u $(CHARTMUSEUM_CREDS_USR):$(CHARTMUSEUM_CREDS_PSW) --data-binary "@$(NAME)-$(shell sed -n 's/^version: //p' Chart.yaml).tgz" $(CHART_REPO)/api/charts
+	helm repo update
 	rm -rf ${NAME}*.tgz%
 
 tag:
