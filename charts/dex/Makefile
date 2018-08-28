@@ -1,7 +1,7 @@
 CHART_REPO := http://jenkins-x-chartmuseum:8080
 NAME := dex
 OS := $(shell uname)
-VERSION := $(shell cat ../../version/VERSION)
+VERSION := $(shell cat ../../VERSION)
 
 setup:
 	helm repo add jenkins-x-api https://chartmuseum.build.cd.jenkins-x.io 	
