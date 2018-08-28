@@ -24,7 +24,7 @@ clean:
 
 release: clean
 	helm init --client-only
-	helm repo add  jenkinsio $CHART_REPO
+	helm repo add  jenkinsio ${CHART_REPO}
 	helm dependency build
 	helm lint
 	helm package .
