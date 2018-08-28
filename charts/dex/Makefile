@@ -4,8 +4,8 @@ NAME := dex
 OS := $(shell uname)
 VERSION := $(shell cat ../../VERSION)
 
-setup: 
-    helm repo add jenkins-x-api http://chartmuseum.build.cd.jenkins-x.io
+setup:
+	helm repo add jenkinsxio https://chartmuseum.jx.cd.jenkins-x.io 
 
 build: setup clean
 	helm dependency build
