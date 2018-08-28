@@ -1,0 +1,42 @@
++ make release
+helm init --client-only
+Creating /home/jenkins/.helm 
+Creating /home/jenkins/.helm/repository 
+Creating /home/jenkins/.helm/repository/cache 
+Creating /home/jenkins/.helm/repository/local 
+Creating /home/jenkins/.helm/plugins 
+Creating /home/jenkins/.helm/starters 
+Creating /home/jenkins/.helm/cache/archive 
+Creating /home/jenkins/.helm/repository/repositories.yaml 
+Adding stable repo with URL: https://kubernetes-charts.storage.googleapis.com 
+Adding local repo with URL: http://127.0.0.1:8879/charts 
+$HELM_HOME has been configured at /home/jenkins/.helm.
+Not installing Tiller due to 'client-only' flag having been set
+Happy Helming!
+helm repo add jenkins-x-api https://chartmuseum.build.cd.jenkins-x.io 
+"jenkins-x-api" has been added to your repositories
+helm repo add jenkinsxio https://chartmuseum.jx.cd.jenkins-x.io 
+"jenkinsxio" has been added to your repositories
+rm -rf charts
+rm -rf dex*.tgz
+rm -rf requirements.lock
+helm dependency build
+Hang tight while we grab the latest from your chart repositories...
+...Unable to get an update from the "local" chart repository (http://127.0.0.1:8879/charts):
+	Get http://127.0.0.1:8879/charts/index.yaml: dial tcp 127.0.0.1:8879: connect: connection refused
+...Successfully got an update from the "stable" chart repository
+...Successfully got an update from the "jenkins-x-api" chart repository
+...Successfully got an update from the "jenkinsxio" chart repository
+Update Complete. ⎈Happy Helming!⎈
+Saving 1 charts
+Downloading cert-manager from repo https://chartmuseum.build.cd.jenkins-x.io
+Deleting outdated charts
+helm lint
+==> Linting .
+Lint OK
+
+1 chart(s) linted, no failures
+sed -i -e "s/version:.*/version: 2.10.48/" Chart.yaml
+sed -i -e "s|repository: .*|repository: docker.io\/jenkins-x\/dex|" values.yaml
+sed -i -e "s/tag: .*/tag: 2.10.48/" values.yaml
+git add --all
