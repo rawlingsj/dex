@@ -1,22 +1,19 @@
 CHART_REPO := http://jenkins-x-chartmuseum:8080
-CURRENT=$(pwd)
 NAME := dex
 OS := $(shell uname)
-VERSION := $(shell cat ../../VERSION)
+VERSION := $(shell cat ../../version/VERSION)
 
-setup:
-	helm repo add jenkins-x-api https://chartmuseum.build.cd.jenkins-x.io 
-	helm repo add jenkinsxio https://chartmuseum.jx.cd.jenkins-x.io 
-
-build: setup clean
+build: clean
 	helm dependency build
 	helm lint
 
-install: clean setup build
+install: clean build
 	helm install . --name ${NAME}
+	watch kubectl get pods
 
-upgrade: clean setup  build
+upgrade: clean build
 	helm upgrade ${NAME} .
+	watch kubectl get pods
 
 delete:
 	helm delete --purge ${NAME}
@@ -26,28 +23,17 @@ clean:
 	rm -rf ${NAME}*.tgz
 	rm -rf requirements.lock
 
-init:
-	helm init --client-only
-
-release: init setup clean build tag
-	helm package .
-	curl --fail -u $(CHARTMUSEUM_CREDS_USR):$(CHARTMUSEUM_CREDS_PSW) --data-binary "@$(NAME)-$(VERSION).tgz" $(CHART_REPO)/api/charts
-	helm repo update
-	rm -rf ${NAME}*.tgz
-
-tag:
+release: clean build
 ifeq ($(OS),Darwin)
 	sed -i "" -e "s/version:.*/version: $(VERSION)/" Chart.yaml
-	sed -i "" -e "s/tag: .*/tag: $(VERSION)/" values.yaml
+	sed -i "" -e "s/tag:.*/tag: $(VERSION)/" values.yaml
+
 else ifeq ($(OS),Linux)
 	sed -i -e "s/version:.*/version: $(VERSION)/" Chart.yaml
-	sed -i -e "s|repository: .*|repository: $(DOCKER_REGISTRY)\/jenkins-x\/$(NAME)|" values.yaml
-	sed -i -e "s/tag: .*/tag: $(VERSION)/" values.yaml
+	sed -i -e "s/tag:.*/tag: $(VERSION)/" values.yaml
 else
-	echo "platfrom $(OS) not supported to tag with"
 	exit -1
 endif
-	git add --all
-	git commit -m "release $(VERSION)" --allow-empty # if first release then no verion update is performed
-	git tag -fa v$(VERSION) -m "Release version $(VERSION)"
-	git push origin v$(VERSION)
+	helm package .
+	curl --fail -u $(CHARTMUSEUM_CREDS_USR):$(CHARTMUSEUM_CREDS_PSW) --data-binary "@$(NAME)-$(VERSION).tgz" $(CHART_REPO)/api/charts
+	rm -rf ${NAME}*.tgz
