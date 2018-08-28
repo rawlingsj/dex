@@ -41,6 +41,9 @@ pipeline {
         }
       }
       stage('Build Release') {
+        environment {
+           CHARTMUSEUM_CREDS = credentials('jenkins-x-chartmuseum')
+        }
         when {
           branch 'master'
         }

@@ -1,4 +1,4 @@
-CHART_REPO := http://jenkins-x-chartmuseum:8080
+CHART_REPO := jenkinsxio
 CURRENT=$(pwd)
 NAME := dex
 OS := $(shell uname)
