@@ -33,7 +33,7 @@ release: init setup clean build tag
 	helm package .
 	curl --fail -u $(CHARTMUSEUM_CREDS_USR):$(CHARTMUSEUM_CREDS_PSW) --data-binary "@$(NAME)-$(VERSION).tgz" $(CHART_REPO)/api/charts
 	helm repo update
-	rm -rf ${NAME}*.tgz%
+	rm -rf ${NAME}*.tgz
 
 tag:
 ifeq ($(OS),Darwin)
