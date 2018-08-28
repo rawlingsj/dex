@@ -74,7 +74,6 @@ pipeline {
               }
             }
             dir ('/home/jenkins/go/src/github.com/coreos/dex/charts/dex') {
-              sh "make tag"
               sh "make release"
             }
           }
