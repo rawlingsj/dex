@@ -70,11 +70,11 @@ pipeline {
                 sh "make test release-binary"
                 sh 'export VERSION=`cat VERSION` && skaffold build -f skaffold.yaml'
 
+                sh "jx step tag --version \$(cat VERSION)"
                 sh "jx step post build --image $DOCKER_REGISTRY/$ORG/$APP_NAME:\$(cat VERSION)"
               }
             }
             dir ('/home/jenkins/go/src/github.com/coreos/dex/charts/dex') {
-              sh "helm init --client-only"
               sh "make release"
             }
           }
