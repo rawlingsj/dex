@@ -12,7 +12,7 @@ metadata:
 spec:
   secretName: {{ .Values.certs.grpc.server.secretName }}
   issuerRef:
-    name: {{ $fullname }}-grpc-issuer
+    name: dex-grpc-cert-issuer
     kind: ClusterIssuer
   commonName: dex.{{ .Release.Namespace }}
   dnsName:
