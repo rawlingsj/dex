@@ -1,6 +1,7 @@
 {{- if .Values.certs.grpc.create }}
 {{ $fullname := include "fullname" . }}
 {{ $caName := .Values.certs.grpc.ca.secretName }}
+{{ $caNamespace := default .Release.Namespace .Values.certs.grpc.ca.namespace }}
 {{ $openSslConfigName := printf "%s-openssl-config" $fullname }}
 {{ $local := dict "i" 0 }}
 apiVersion: batch/v1
@@ -63,9 +64,9 @@ spec:
 
           # Store the CA certificate and key in a secret
           notfound=false
-          kubectl get secret {{ $caName }} --namespace {{ .Release.Namespace }} || notfound=true
+          kubectl get secret {{ $caName }} --namespace {{ $caNamespace }} || notfound=true
           if $notfound; then
-            kubectl create secret tls {{ $caName }} --namespace {{ .Release.Namespace }} --cert=ca.crt --key=ca.key;
+            kubectl create secret tls {{ $caName }} --namespace {{ $caNamespace }} --cert=ca.crt --key=ca.key;
           fi
         volumeMounts:
         - name: openssl-config
