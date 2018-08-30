@@ -59,6 +59,7 @@ certs:
       - dex
     altIPs: {}
     ca:
+      namespace:
       secretName: dex-grpc-ca
     server:
       secretName: dex-grpc-server-cert
