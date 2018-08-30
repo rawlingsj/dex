@@ -64,9 +64,17 @@ spec:
 
           # Store the CA certificate and key in a secret
           notfound=false
-          kubectl get secret {{ $caName }} --namespace {{ $caNamespace }} || notfound=true
+          caNamespace={{ $caNamespace }}
+          kubectl get secret {{ $caName }} --namespace $caNamespace || notfound=true
           if $notfound; then
-            kubectl create secret tls {{ $caName }} --namespace {{ $caNamespace }} --cert=ca.crt --key=ca.key;
+            kubectl create secret tls {{ $caName }} --namespace $caNamespace --cert=ca.crt --key=ca.key;
+          fi
+          releaseNamespace={{ .Release.Namespace }}
+          if [ "$caNamespace" != "$releaseNamespace" ]; then 
+            kubectl get secret {{ $caName }} --namespace $releaseNamespace || notfound=true
+            if $notfound; then
+                kubectl create secret tls {{ $caName }} --namespace $releaseNamespace --cert=ca.crt --key=ca.key;
+            fi
           fi
         volumeMounts:
         - name: openssl-config
