@@ -4,7 +4,7 @@
 replicaCount: 1
 image:
   repository: jenkinsxio/dex
-  tag: 2.10.42
+  tag: 2.10.60
   pullPolicy: IfNotPresent
 
 service:
