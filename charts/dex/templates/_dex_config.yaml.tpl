@@ -37,3 +37,6 @@ oauth2:
   skipApprovalScreen: true
 
 enablePasswordDB: true
+
+frontend:
+  theme: cloudbees
