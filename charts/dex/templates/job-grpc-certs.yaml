@@ -76,7 +76,7 @@ spec:
             if $found; then
                 kubectl delete secret {{ $caName }} --namespace $releaseNamespace 
             fi
-            kubectl get secret {{ $caName }} --namespace $caNamespace | kubectl apply --namespace $releaseNamespace -f -
+            kubectl get secret {{ $caName }} --namespace $caNamespace --export -o yaml | kubectl apply --namespace $releaseNamespace -f -
           fi
         volumeMounts:
         - name: openssl-config
