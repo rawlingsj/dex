@@ -71,10 +71,12 @@ spec:
           fi
           releaseNamespace={{ .Release.Namespace }}
           if [ "$caNamespace" != "$releaseNamespace" ]; then 
-            kubectl get secret {{ $caName }} --namespace $releaseNamespace || notfound=true
-            if $notfound; then
-                kubectl create secret tls {{ $caName }} --namespace $releaseNamespace --cert=ca.crt --key=ca.key;
+            found=true
+            kubectl get secret {{ $caName }} --namespace $releaseNamespace || found=false
+            if $found; then
+                kubectl delete secret {{ $caName }} --namespace $releaseNamespace 
             fi
+            kubectl get secret {{ $caName }} --namespace $caNamespace | kubectl apply --namespace $releaseNamespace -f -
           fi
         volumeMounts:
         - name: openssl-config
