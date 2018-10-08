@@ -1,13 +1,11 @@
 pipeline {
-    agent {
-        label "jenkins-go"
-    }
+    agent any
     environment {
       DOCKER_REGISTRY = 'docker.io'
       ORG          = 'jenkinsxio'
       APP_NAME     = 'dex'
       GIT_PROVIDER = 'github.com'
-      GIT_CREDS    = credentials('jenkins-x-git')
+      GIT_CREDS    = credentials('jenkins-x-github')
     }
     stages {
       stage('CI Build and push snapshot') {
@@ -22,22 +20,19 @@ pipeline {
         steps {
           dir ('/home/jenkins/go/src/github.com/coreos/dex') {
             checkout scm
-            container('go') {
-              sh "make test release-binary"
 
-              sh 'export VERSION=$PREVIEW_VERSION && skaffold build -f skaffold.yaml'
+            sh "make test release-binary"
 
-              sh "jx step post build --image $DOCKER_REGISTRY/$ORG/$APP_NAME:$PREVIEW_VERSION"
-            }
+            sh 'export VERSION=$PREVIEW_VERSION && skaffold build -f skaffold.yaml'
+
+            sh "jx step post build --image $DOCKER_REGISTRY/$ORG/$APP_NAME:$PREVIEW_VERSION"
           }
           dir ('/home/jenkins/go/src/github.com/coreos/dex/charts/preview') {
-            container('go') {
-              sh "make preview"
-              sh "jx preview --app $APP_NAME --dir ../.."
+            sh "make preview"
+            sh "jx preview --app $APP_NAME --dir ../.."
 
-              // verify if the preview was properly deployed 
-              sh 'jx step verify --pods=1 --after=90 --restarts=0'
-            }
+            // verify if the preview was properly deployed 
+            sh 'jx step verify --pods=1 --after=90 --restarts=0'
           }
         }
       }
@@ -49,9 +44,8 @@ pipeline {
           branch 'master'
         }
         steps {
-          container('go') {
             dir ('/home/jenkins/go/src/github.com/coreos/dex') {
-              checkout scm
+              git 'https://github.com/jenkins-x/dex'
             }
             dir ('/home/jenkins/go/src/github.com/coreos/dex/charts/dex') {
                 // ensure we're not on a detached head
@@ -66,24 +60,18 @@ pipeline {
               sh "echo \$(jx-release-version) > VERSION"
             }
             dir ('/home/jenkins/go/src/github.com/coreos/dex') {
-              container('go') {
-                sh "make test release-binary"
-                sh 'export VERSION=`cat VERSION` && skaffold build -f skaffold.yaml'
 
-                sh "jx step tag --version \$(cat VERSION)"
-                sh "jx step post build --image $DOCKER_REGISTRY/$ORG/$APP_NAME:\$(cat VERSION)"
-              }
+              sh "make test release-binary"
+              sh 'export VERSION=`cat VERSION` && skaffold build -f skaffold.yaml'
+
+              sh "jx step tag --version \$(cat VERSION)"
+              sh "jx step post build --image $DOCKER_REGISTRY/$ORG/$APP_NAME:\$(cat VERSION)"
+
             }
             dir ('/home/jenkins/go/src/github.com/coreos/dex/charts/dex') {
               sh "make release"
             }
-          }
         }
       }
-    }
-    post {
-        always {
-            cleanWs()
-        }
     }
   }
