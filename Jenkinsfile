@@ -27,13 +27,6 @@ pipeline {
 
             sh "jx step post build --image $DOCKER_REGISTRY/$ORG/$APP_NAME:$PREVIEW_VERSION"
           }
-          dir ('/home/jenkins/go/src/github.com/coreos/dex/charts/preview') {
-            sh "make preview"
-            sh "jx preview --app $APP_NAME --dir ../.."
-
-            // verify if the preview was properly deployed 
-            sh 'jx step verify --pods=1 --after=90 --restarts=0'
-          }
         }
       }
       stage('Build Release') {
