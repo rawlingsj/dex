@@ -5,7 +5,7 @@ pipeline {
       ORG          = 'jenkinsxio'
       APP_NAME     = 'dex'
       GIT_PROVIDER = 'github.com'
-      GIT_CREDS    = credentials('jenkins-x-github')
+      GIT_CREDS    = credentials('jx-pipeline-git-github-github')
     }
     stages {
       stage('CI Build and push snapshot') {
