@@ -40,7 +40,7 @@ pipeline {
             dir ('/home/jenkins/go/src/github.com/dexidp/dex') {
               git 'https://github.com/jenkins-x/dex'
             }
-            dir ('/home/jenkins/go/src/github.com/dexip/dex') {
+            dir ('/home/jenkins/go/src/github.com/dexidp/dex') {
                 // ensure we're not on a detached head
                 sh "git checkout master"
                 // until we switch to the new kubernetes / jenkins credential implementation use git credentials store
@@ -52,7 +52,7 @@ pipeline {
               // so we can retrieve the version in later steps
               sh "echo \$(jx-release-version) > VERSION"
             }
-            dir ('/home/jenkins/go/src/github.com/dexipd/dex') {
+            dir ('/home/jenkins/go/src/github.com/dexidp/dex') {
 
               sh "make test release-binary"
               sh 'export VERSION=`cat VERSION` && skaffold build -f skaffold.yaml'
