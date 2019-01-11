@@ -43,9 +43,8 @@ pipeline {
             dir ('/home/jenkins/go/src/github.com/dexidp/dex') {
                 // ensure we're not on a detached head
                 sh "git checkout master"
-                // until we switch to the new kubernetes / jenkins credential implementation use git credentials store
-                sh "git config --global credential.helper store"
 
+                sh "git config --global credential.helper store"
                 sh "jx step git credentials"
             }
             dir ('/home/jenkins/go/src/github.com/dexidp/dex') {
