@@ -40,7 +40,7 @@ pipeline {
             dir ('/home/jenkins/go/src/github.com/dexidp/dex') {
               git 'https://github.com/jenkins-x/dex'
             }
-            dir ('/home/jenkins/go/src/github.com/dexip/dex/') {
+            dir ('/home/jenkins/go/src/github.com/dexip/dex') {
                 // ensure we're not on a detached head
                 sh "git checkout master"
                 // until we switch to the new kubernetes / jenkins credential implementation use git credentials store
