@@ -36,7 +36,7 @@ connectors:
 oauth2:
   skipApprovalScreen: true
 
-enablePasswordDB: true
+enablePasswordDB: false
 
 frontend:
   theme: cloudbees
