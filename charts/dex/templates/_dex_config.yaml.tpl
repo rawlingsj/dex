@@ -32,7 +32,7 @@ connectors:
 {{- range $connector.config.orgs }}
       - name: {{ . }}
 {{- end }}
-{{- if eq connector.config.type "github" }}
+{{- if eq $connector.config.type "github" }}
    useLoginAsID: true
 {{- end }}
 {{- end }}
