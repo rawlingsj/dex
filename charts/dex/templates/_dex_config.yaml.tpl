@@ -33,7 +33,7 @@ connectors:
       - name: {{ . }}
 {{- end }}
 {{- if eq $connector.config.type "github" }}
-   useLoginAsID: true
+    useLoginAsID: true
 {{- end }}
 {{- end }}
 oauth2:
