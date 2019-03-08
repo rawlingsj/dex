@@ -32,6 +32,9 @@ connectors:
 {{- range $connector.config.orgs }}
       - name: {{ . }}
 {{- end }}
+{{- if eq $connector.config.type "github" }}
+   useLoginAsID: true
+{{- end }}
 {{- end }}
 oauth2:
   skipApprovalScreen: true
