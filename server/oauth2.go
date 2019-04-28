@@ -539,30 +539,45 @@ func (s *Server) validateCrossClientTrust(clientID, peerID string) (trusted bool
 }
 
 func validateRedirectURI(client storage.Client, redirectURI string) bool {
+	fmt.Printf("XXXX %s\n", redirectURI)
 	if !client.Public {
+		fmt.Printf("XXXX 1 %s\n", redirectURI)
 		for _, uri := range client.RedirectURIs {
+			fmt.Printf("XXXX 2 %s\n", uri)
 			if redirectURI == uri {
+				fmt.Print("XXXX 3\n")
 				return true
 			}
 		}
+		fmt.Print("XXXX 4\n")
 		return false
 	}
-
+	fmt.Print("XXXX 5\n")
 	if redirectURI == redirectURIOOB {
+		fmt.Printf("XXXX 6 %s\n", redirectURIOOB)
 		return true
 	}
-
+	fmt.Print("XXXX 7\n")
 	// verify that the host is of form "http://localhost:(port)(path)" or "http://localhost(path)"
 	u, err := url.Parse(redirectURI)
+	fmt.Print("XXXX 8\n")
 	if err != nil {
+		fmt.Print("XXXX 9\n")
 		return false
 	}
+	fmt.Print("XXXX 10\n")
 	if u.Scheme != "http" {
+		fmt.Print("XXXX 11\n")
 		return false
 	}
+	fmt.Print("XXXX 12\n")
 	if u.Host == "localhost" {
+		fmt.Print("XXXX 13\n")
 		return true
 	}
+	fmt.Print("XXXX 14\n")
 	host, _, err := net.SplitHostPort(u.Host)
+	fmt.Printf("XXXX 15 %s\n", host)
+	fmt.Printf("XXXX 15 %v\n", err)
 	return err == nil && host == "localhost"
 }
