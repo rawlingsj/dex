@@ -1,7 +1,9 @@
 CHART_REPO := http://jenkins-x-chartmuseum:8080
 NAME := dex
 OS := $(shell uname)
-VERSION := $(shell cat ../../VERSION)
+
+CHARTMUSEUM_CREDS_USR := $(shell cat /builder/home/basic-auth-user)
+CHARTMUSEUM_CREDS_PSW := $(shell cat /builder/home/basic-auth-pass)
 
 init: 
 	helm init --client-only
@@ -10,9 +12,10 @@ setup: init
 	helm repo add jenkins-x-api https://chartmuseum.build.cd.jenkins-x.io 	
 	helm repo add jenkinsxio https://chartmuseum.jx.cd.jenkins-x.io 
 
-build: clean setup
+build: clean
 	helm dependency build
 	helm lint
+	helm template .
 
 install: clean setup build
 	helm install . --name ${NAME}
@@ -30,7 +33,7 @@ clean:
 	rm -rf ${NAME}*.tgz
 	rm -rf requirements.lock
 
-release: clean build
+release: build
 ifeq ($(OS),Darwin)
 	sed -i "" -e "s/version:.*/version: $(VERSION)/" Chart.yaml
 	sed -i "" -e "s/tag:.*/tag: $(VERSION)/" values.yaml
