@@ -17,6 +17,6 @@ cleanup:
 
 preview:
   image:
-    repository:
+    imageRepo:
     tag:
     pullPolicy: IfNotPresent
