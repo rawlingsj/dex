@@ -9,9 +9,7 @@ metadata:
     release: "{{ .Release.Name }}"
   name: {{ template "fullname" . }}-openssl-config
   annotations:
-    "helm.sh/hook": post-install,post-upgrade
-    "helm.sh/hook-weight": "1"
-    "helm.sh/hook-delete-policy": hook-succeeded
+    "helm.sh/hook": pre-install,pre-upgrade
 data:
   openssl.conf: |
 {{ .Files.Get "config/openssl.conf" | indent 4 }}
