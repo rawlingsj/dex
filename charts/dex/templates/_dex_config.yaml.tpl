@@ -21,18 +21,23 @@ grpc:
 {{- end }}
 connectors:
 {{- range $id, $connector := .Values.connectors }}
-- type: {{ $connector.config.type }}
+{{- $type := $connector.config.type | default "github" }}
+{{- $id = $id | default "github" }}
+{{- $name := $connector.config.name | default "GitHub" }}
+- type: {{ $type }}
   id: {{ $id }}
-  name: {{ $connector.config.name }}
+  name: {{ $name }}
   config:
     clientID: {{ $connector.config.clientID }}
     clientSecret: {{ $connector.config.clientSecret }}
     redirectURI: https://{{ $issuerDomain }}/callback
+{{- if hasKey $connector.config.orgs }}
     orgs:
 {{- range $connector.config.orgs }}
       - name: {{ . }}
 {{- end }}
-{{- if eq $connector.config.type "github" }}
+{{- end }}
+{{- if eq $type "github" }}
     useLoginAsID: true
 {{- end }}
 {{- end }}
