@@ -31,7 +31,7 @@ connectors:
     clientID: {{ $connector.config.clientID }}
     clientSecret: {{ $connector.config.clientSecret }}
     redirectURI: https://{{ $issuerDomain }}/callback
-{{- if hasKey $connector.config.orgs }}
+{{- if hasKey $connector.config "orgs" }}
     orgs:
 {{- range $connector.config.orgs }}
       - name: {{ . }}
