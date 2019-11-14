@@ -31,7 +31,7 @@ spec:
       restartPolicy: OnFailure
       containers:
       - name: main
-        image: "{{ .Values.certs.image }}:{{ .Values.certs.imageTag }}"
+        image: "{{ .Values.certs.image | default "gcr.io/jenkinsxio/openssl" }}:{{ .Values.certs.imageTag | default .Values.image.tag }}"
         imagePullPolicy: {{ .Values.certs.imagePullPolicy }}
         command:
         - /bin/bash
