@@ -1,0 +1,8 @@
+FROM centos:7
+
+RUN yum install -y openssl
+RUN curl -f -LO https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl && \
+    chmod +x kubectl && \
+    mv kubectl /usr/bin/
+
+CMD ['bash']

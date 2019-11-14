@@ -52,6 +52,15 @@ pipelineConfig:
                 - --context=/workspace/source
                 - --cache-dir=/workspace
 
+              - name: build-and-push-image
+                image: gcr.io/kaniko-project/executor:9912ccbf8d22bbafbf971124600fbb0b13b9cbd6
+                command: /kaniko/executor
+                args: 
+                - --dockerfile=/workspace/source/Dockerfile.openssl
+                - --destination=gcr.io/jenkinsxio/openssl:${inputs.params.version}
+                - --context=/workspace/source
+                - --cache-dir=/workspace
+
               - name: helm-lint
                 image: gcr.io/jenkinsxio/builder-go:0.1.332
                 command: make
@@ -142,6 +151,15 @@ pipelineConfig:
                 args: 
                 - --dockerfile=/workspace/source/Dockerfile
                 - --destination=gcr.io/jenkinsxio/dex:${inputs.params.version}
+                - --context=/workspace/source
+                - --cache-dir=/workspace
+
+              - name: build-and-push-image
+                image: gcr.io/kaniko-project/executor:9912ccbf8d22bbafbf971124600fbb0b13b9cbd6
+                command: /kaniko/executor
+                args: 
+                - --dockerfile=/workspace/source/Dockerfile.openssl
+                - --destination=gcr.io/jenkinsxio/openssl:${inputs.params.version}
                 - --context=/workspace/source
                 - --cache-dir=/workspace
 
